@@ -310,7 +310,7 @@
       "blocks": "auto",
       "steps": "auto",
       "capture_unconditional": false,
-      "capture_cross_stream_attention": true,
+      "capture_cross_stream_attention": false,
       "attention_queries_per_stream": 16,
       "source_drift_thresholds": "0.02,0.05,0.10,0.20",
       "score_floor": 0.0001,

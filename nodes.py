@@ -202,8 +202,11 @@ class MiniMaxH3AVInternalTrace(io.ComfyNode):
                 io.Boolean.Input("capture_unconditional", default=False),
                 io.Boolean.Input(
                     "capture_cross_stream_attention",
-                    default=True,
-                    tooltip="Measure bounded audio/video query attention mass on selected blocks and steps.",
+                    default=False,
+                    tooltip=(
+                        "Experimental: measure bounded audio/video attention mass. Leave disabled for strict "
+                        "output-neutral tracing because ComfyUI's override path can change backend dispatch."
+                    ),
                 ),
                 io.Int.Input(
                     "attention_queries_per_stream",

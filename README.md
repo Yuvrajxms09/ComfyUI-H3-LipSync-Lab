@@ -2,7 +2,7 @@
 
 Output-neutral MiniMax H3 instrumentation for comparing a good-lip-sync Ref2VA trajectory with a source-preserving FL2VA/source-latent trajectory.
 
-This is a measurement node, not a lip-sync modifier. It uses official ComfyUI model-patcher seams and returns the original tensors unchanged.
+This is a measurement node, not a lip-sync modifier. Its default mode uses official ComfyUI model-patcher seams and returns the original tensors unchanged.
 
 ## Installation
 
@@ -40,7 +40,7 @@ Artifacts:
 
 Default capture is deliberately bounded: early/middle/late blocks and early/middle/late sampling steps, conditional branch only. Use `all` only for a deliberate diagnostic run.
 
-When no other optimized-attention override is active, the node also measures bounded target-audio/target-video query attention mass by packed key category. If another attention override is already present, attention capture is disabled rather than replacing or bypassing it; block and source-drift metrics still run.
+Cross-stream attention capture is experimental and disabled by default. ComfyUI's optimized-attention override path can bypass H3's preferred attention dispatch, so it is not part of the strict output-neutral baseline. If explicitly enabled, it measures bounded target-audio/target-video query attention mass by packed key category. If another attention override is already present, capture is disabled rather than replacing it; block and source-drift metrics still run.
 
 ## Integration order
 

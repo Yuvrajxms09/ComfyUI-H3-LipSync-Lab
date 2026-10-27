@@ -40,7 +40,7 @@ def trace_node(model_input, source_input, target_input, label: str, tag: str) ->
             "blocks": "auto",
             "steps": "auto",
             "capture_unconditional": False,
-            "capture_cross_stream_attention": True,
+            "capture_cross_stream_attention": False,
             "attention_queries_per_stream": 16,
             "source_drift_thresholds": "0.02,0.05,0.10,0.20",
             "score_floor": 0.0001,
