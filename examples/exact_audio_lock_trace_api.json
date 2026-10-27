@@ -1,0 +1,402 @@
+{
+  "92": {
+    "inputs": {
+      "filename_prefix": "MiniMaxH3/LipsyncFast/hemsworth_exact_audio_lock",
+      "format": "auto",
+      "codec": "auto",
+      "video": [
+        "130",
+        0
+      ]
+    },
+    "class_type": "SaveVideo",
+    "_meta": {
+      "title": "Save Video"
+    }
+  },
+  "119": {
+    "inputs": {
+      "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "Load VAE"
+    }
+  },
+  "120": {
+    "inputs": {
+      "vae_name": "minimax_h3_audio_vae_fp32.safetensors"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "Load VAE"
+    }
+  },
+  "122": {
+    "inputs": {
+      "samples": [
+        "125",
+        0
+      ],
+      "vae": [
+        "119",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode"
+    }
+  },
+  "123": {
+    "inputs": {
+      "sampler_name": "res_multistep"
+    },
+    "class_type": "KSamplerSelect",
+    "_meta": {
+      "title": "KSamplerSelect"
+    }
+  },
+  "124": {
+    "inputs": {
+      "scheduler": "simple",
+      "steps": 25,
+      "denoise": 1.0,
+      "model": [
+        "127",
+        0
+      ]
+    },
+    "class_type": "BasicScheduler",
+    "_meta": {
+      "title": "BasicScheduler"
+    }
+  },
+  "125": {
+    "inputs": {
+      "noise": [
+        "129",
+        0
+      ],
+      "guider": [
+        "126",
+        0
+      ],
+      "sampler": [
+        "123",
+        0
+      ],
+      "sigmas": [
+        "124",
+        0
+      ],
+      "latent_image": [
+        "r2v_exact_audio_lock",
+        0
+      ]
+    },
+    "class_type": "SamplerCustomAdvanced",
+    "_meta": {
+      "title": "SamplerCustomAdvanced"
+    }
+  },
+  "126": {
+    "inputs": {
+      "model": [
+        "trace_internal",
+        0
+      ],
+      "conditioning": [
+        "r2v_add_guide",
+        0
+      ]
+    },
+    "class_type": "BasicGuider",
+    "_meta": {
+      "title": "Basic Guider"
+    }
+  },
+  "127": {
+    "inputs": {
+      "unet_name": "minimax_h3_ref2va_pruned_int8_convrot.safetensors",
+      "weight_dtype": "default"
+    },
+    "class_type": "UNETLoader",
+    "_meta": {
+      "title": "Load Diffusion Model"
+    }
+  },
+  "128": {
+    "inputs": {
+      "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "type": "minimax",
+      "device": "default"
+    },
+    "class_type": "CLIPLoader",
+    "_meta": {
+      "title": "Load CLIP"
+    }
+  },
+  "129": {
+    "inputs": {
+      "noise_seed": 419433329744414
+    },
+    "class_type": "RandomNoise",
+    "_meta": {
+      "title": "RandomNoise"
+    }
+  },
+  "130": {
+    "inputs": {
+      "fps": 24.0,
+      "bit_depth": 8,
+      "images": [
+        "122",
+        0
+      ],
+      "audio": [
+        "r2v_exact_audio_lock",
+        1
+      ]
+    },
+    "class_type": "CreateVideo",
+    "_meta": {
+      "title": "Create Video"
+    }
+  },
+  "131": {
+    "inputs": {
+      "expression": "max(5, round(a * 24)) + (5 - (max(5, round(a * 24)) % 17)) % 17",
+      "values.a": [
+        "132",
+        0
+      ]
+    },
+    "class_type": "ComfyMathExpression",
+    "_meta": {
+      "title": "Math Expression"
+    }
+  },
+  "132": {
+    "inputs": {
+      "value": 5.0
+    },
+    "class_type": "PrimitiveFloat",
+    "_meta": {
+      "title": "Float (Duration)"
+    }
+  },
+  "136": {
+    "inputs": {
+      "prompt": [
+        "138",
+        0
+      ],
+      "width": [
+        "151",
+        0
+      ],
+      "height": [
+        "152",
+        0
+      ],
+      "length": [
+        "131",
+        1
+      ],
+      "ref_image_size": "match",
+      "clip": [
+        "128",
+        0
+      ],
+      "vae": [
+        "119",
+        0
+      ],
+      "audio_vae": [
+        "120",
+        0
+      ],
+      "ref_videos.ref_video_0": [
+        "r2v_input_video_components",
+        0
+      ]
+    },
+    "class_type": "MiniMaxH3ReferenceToVideo",
+    "_meta": {
+      "title": "MiniMax H3 Reference to Video"
+    }
+  },
+  "138": {
+    "inputs": {
+      "value": "subject_definitions:\n<Subject 1> is the visible person in <Video 1> and the only speaker.\n<Video 1> is the visual reference for the target shot.\nThe supplied speech audio is the exact target performance and final soundtrack.\n\nsummary:\nCreate one continuous shot based on <Video 1>. <Subject 1> speaks in natural, close synchronization with the supplied speech audio.\n\ndetailed_description:\nKeep <Subject 1> recognizable and retain the scene, clothing, framing, lighting, and camera position from <Video 1>. Adjust the person's lips, mouth, and jaw to articulate the actual speech heard in the supplied audio. Follow its phonemes, pacing, pauses, and ending. The supplied audio determines exactly what is said and when; do not invent, repeat, omit, or paraphrase words. Keep the person as the only speaker. Do not add subtitles, cuts, or scene changes.\n\noverall_soundscape:\nUse the supplied speech audio as the exact final soundtrack. Do not generate or add speech, ambience, Foley, effects, or music.\n\nnon_diegetic_music:\nNone.\n"
+    },
+    "class_type": "PrimitiveStringMultiline",
+    "_meta": {
+      "title": "Input Text (Prompt)"
+    }
+  },
+  "r2v_source_video": {
+    "inputs": {
+      "file": "hemsworth_source_320x576_124f_silent.mp4"
+    },
+    "class_type": "LoadVideo",
+    "_meta": {
+      "title": "Source video (visual reference only)"
+    }
+  },
+  "r2v_input_video_components": {
+    "inputs": {
+      "video": [
+        "r2v_source_video",
+        0
+      ]
+    },
+    "class_type": "GetVideoComponents",
+    "_meta": {
+      "title": "Source video frames"
+    }
+  },
+  "r2v_speech_audio": {
+    "inputs": {
+      "audio": "weapon_17_5p166s_32k_stereo.wav"
+    },
+    "class_type": "LoadAudio",
+    "_meta": {
+      "title": "Supplied speech performance"
+    }
+  },
+  "r2v_timed_speech": {
+    "inputs": {
+      "audio": [
+        "r2v_speech_audio",
+        0
+      ],
+      "start_frame": 0,
+      "gain_db": 0.0,
+      "label": "supplied dialogue"
+    },
+    "class_type": "MiniMaxH3TimedAudio",
+    "_meta": {
+      "title": "Place supplied speech on H3 timeline"
+    }
+  },
+  "r2v_add_guide": {
+    "inputs": {
+      "positive": [
+        "136",
+        0
+      ],
+      "vae": [
+        "119",
+        0
+      ],
+      "audio_vae": [
+        "120",
+        0
+      ],
+      "latent": [
+        "136",
+        1
+      ],
+      "audio": [
+        "r2v_speech_audio",
+        0
+      ],
+      "frame_idx": [
+        "r2v_timed_speech",
+        1
+      ]
+    },
+    "class_type": "MiniMaxH3AddGuide",
+    "_meta": {
+      "title": "Guide H3 with the same timed speech"
+    }
+  },
+  "r2v_exact_audio_lock": {
+    "inputs": {
+      "av_latent": [
+        "136",
+        1
+      ],
+      "audio_vae": [
+        "120",
+        0
+      ],
+      "timed_audios.timed_audio_0": [
+        "r2v_timed_speech",
+        0
+      ],
+      "mix_policy": "sum",
+      "overflow_policy": "error",
+      "legacy_start_frame": 0
+    },
+    "class_type": "MiniMaxH3ExactAudioLock",
+    "_meta": {
+      "title": "Lock supplied speech before H3 sampling"
+    }
+  },
+  "151": {
+    "inputs": {
+      "value": 320
+    },
+    "class_type": "PrimitiveInt",
+    "_meta": {
+      "title": "desired_width"
+    }
+  },
+  "152": {
+    "inputs": {
+      "value": 576
+    },
+    "class_type": "PrimitiveInt",
+    "_meta": {
+      "title": "desired_height"
+    }
+  },
+  "trace_source_video_latent": {
+    "class_type": "VAEEncode",
+    "inputs": {
+      "pixels": [
+        "r2v_input_video_components",
+        0
+      ],
+      "vae": [
+        "119",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Trace-only source video encode"
+    }
+  },
+  "trace_internal": {
+    "class_type": "MiniMaxH3AVInternalTrace",
+    "inputs": {
+      "model": [
+        "127",
+        0
+      ],
+      "workflow_label": "exact_ref2va_good_sync",
+      "run_tag": "exact_ref2va_good_sync",
+      "blocks": "auto",
+      "steps": "auto",
+      "capture_unconditional": false,
+      "capture_cross_stream_attention": true,
+      "attention_queries_per_stream": 16,
+      "source_drift_thresholds": "0.02,0.05,0.10,0.20",
+      "score_floor": 0.0001,
+      "source_video_latent": [
+        "trace_source_video_latent",
+        0
+      ],
+      "target_av_latent": [
+        "r2v_exact_audio_lock",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Output-neutral H3 internal trace"
+    }
+  }
+}
